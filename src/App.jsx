@@ -1,35 +1,90 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+import Main from "./components/Main";
+import Cart from "./components/Cart";
+import { useEffect, useState } from "react";
+import { BASE_URL } from "./config";
+import Message from "./components/Message";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [cart, setCart] = useState([]);
+  const [message, setMessage] = useState(null);
+
+  useEffect(() => {
+    const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCart(savedCart);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
+  const showMessage = (color, msg) => {
+    setMessage({color, msg});
+    setTimeout(() => setMessage(null), 500);
+  };
+
+
+  const addToCart = (product) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+    showMessage("green", "Item was added to cart")
+  };
+
+  const removeFromCart = (productId) => {
+    setCart((prevCart) => {
+      const updatedCart = prevCart.filter((item) => item.id !== productId);
+      return updatedCart;
+    });
+    showMessage('red', "Item was removed from cart")
+  };
+
+  const decreaseQuantity = (productId) => {
+    setCart((prevCart) => {
+      return prevCart.reduce((acc, item) => {
+        if (item.id === productId) {
+          const newQuantity = item.quantity - 1;
+          if (newQuantity > 0) {
+            acc.push({ ...item, quantity: newQuantity });
+          }
+        } else {
+          acc.push(item);
+        }
+
+        return acc;
+      }, []);
+    });
+
+    showMessage('red', "Item was removed from cart")
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Message messageData={message} />
+      <Routes>
+        <Route path="/" element={<Main addToCart={addToCart}/>} />
+        <Route
+          path="/cart"
+          element={
+            <Cart
+              cart={cart}
+              removeFromCart={removeFromCart}
+              addToCart={addToCart}
+              decreaseQuantity={decreaseQuantity}
+            />
+          }
+        />
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
