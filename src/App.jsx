@@ -1,22 +1,28 @@
 import { Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import { BASE_URL } from "./config";
+
 import Main from "./components/Main";
 import Cart from "./components/Cart";
-import { useEffect, useState } from "react";
-import { BASE_URL } from "./config";
 import Message from "./components/Message";
 
 function App() {
   const [cart, setCart] = useState([]);
+  const [isCartInitialized, setIsCartInitialized] = useState(false);
   const [message, setMessage] = useState(null);
+
+  useEffect(() => {
+    if (isCartInitialized){
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+  }, [cart]);
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(savedCart);
+    setIsCartInitialized(true)
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
 
   const showMessage = (color, msg) => {
     setMessage({color, msg});
