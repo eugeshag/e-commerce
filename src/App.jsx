@@ -16,7 +16,7 @@ function App() {
     if (isCartInitialized){
       localStorage.setItem("cart", JSON.stringify(cart));
     }
-  }, [cart]);
+  }, [cart, isCartInitialized]);
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
