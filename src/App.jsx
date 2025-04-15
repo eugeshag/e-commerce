@@ -1,8 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { BASE_URL } from "./config";
-
 import Main from "./components/Main";
 import Cart from "./components/Cart";
 import Message from "./components/Message";
@@ -13,7 +11,7 @@ function App() {
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    if (isCartInitialized){
+    if (isCartInitialized) {
       localStorage.setItem("cart", JSON.stringify(cart));
     }
   }, [cart, isCartInitialized]);
@@ -21,14 +19,13 @@ function App() {
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(savedCart);
-    setIsCartInitialized(true)
+    setIsCartInitialized(true);
   }, []);
 
   const showMessage = (color, msg) => {
-    setMessage({color, msg});
+    setMessage({ color, msg });
     setTimeout(() => setMessage(null), 500);
   };
-
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -42,7 +39,7 @@ function App() {
       }
       return [...prev, { ...product, quantity: 1 }];
     });
-    showMessage("green", "Item was added to cart")
+    showMessage("green", "Item was added to cart");
   };
 
   const removeFromCart = (productId) => {
@@ -50,7 +47,7 @@ function App() {
       const updatedCart = prevCart.filter((item) => item.id !== productId);
       return updatedCart;
     });
-    showMessage('red', "Item was removed from cart")
+    showMessage("red", "Item was removed from cart");
   };
 
   const decreaseQuantity = (productId) => {
@@ -69,14 +66,14 @@ function App() {
       }, []);
     });
 
-    showMessage('red', "Item was removed from cart")
+    showMessage("red", "Item was removed from cart");
   };
 
   return (
     <>
       <Message messageData={message} />
       <Routes>
-        <Route path="/" element={<Main addToCart={addToCart}/>} />
+        <Route path="/" element={<Main addToCart={addToCart} />} />
         <Route
           path="/cart"
           element={
