@@ -1,7 +1,10 @@
+import { useContext } from "react";
 import cart_icon from "../assets/icons/cart-plus-solid.svg";
+import { CartContext } from "../context/cartContext";
 
-const Product = ({ product, addToCart }) => {
+const Product = ({ product }) => {
   const { title, price, image } = product;
+  const { addToCart } = useContext(CartContext);
 
   return (
     <div className="flex h-full flex-col justify-center rounded-2xl border-1 border-gray-100 p-5 shadow-md">

@@ -4,10 +4,11 @@ import { BASE_URL } from "../config";
 import Products from "./Products";
 import Filters from "./Filters";
 
-const Content = ({ addToCart, searchQuery }) => {
+const Content = ({ searchQuery }) => {
   const [products, setProducts] = useState([]);
   const [initialProducts, setInitialProducts] = useState([]);
-  const [filter, setFilter] = useState("all");
+  const [sort, setSort] = useState("all");
+  const [priceFilter, setPriceFilter] = useState({min: "", max: ""})
 
   useEffect(() => {
     fetch(BASE_URL + "products/")
@@ -22,7 +23,16 @@ const Content = ({ addToCart, searchQuery }) => {
   useEffect(() => {
     let filtered = [...initialProducts];
 
-    switch (filter) {
+    if (priceFilter) {
+      if (priceFilter.min) {
+        filtered = filtered.filter((product) => product.price >= priceFilter.min);
+      }
+      if (priceFilter.max) {
+        filtered = filtered.filter((product) => product.price <= priceFilter.max);
+      }
+    }
+
+    switch (sort) {
       case "price-asc":
         filtered.sort((a, b) => a.price - b.price);
         break;
@@ -45,12 +55,12 @@ const Content = ({ addToCart, searchQuery }) => {
 
     setProducts(filtered)
 
-  }, [filter, initialProducts, searchQuery]);
+  }, [sort, initialProducts, searchQuery, priceFilter]);
 
   return (
     <div className="flex flex-col p-7">
-      <Filters setFilter={setFilter} />
-      <Products addToCart={addToCart} products={products} />
+      <Filters setSort={setSort} setPriceFilter={setPriceFilter} priceFilter={priceFilter} />
+      <Products products={products} />
     </div>
   );
 };

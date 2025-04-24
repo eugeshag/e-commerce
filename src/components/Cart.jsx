@@ -1,6 +1,10 @@
+import { useContext } from "react";
 import Header from "./Header";
+import { CartContext } from "../context/cartContext";
 
-const Cart = ({ cart, removeFromCart, addToCart, decreaseQuantity }) => {
+const Cart = () => {
+  const { cart, addToCart, removeFromCart, decreaseQuantity } =
+    useContext(CartContext);
   if (cart.length === 0) {
     return (
       <div className="flex h-screen flex-col">
@@ -109,7 +113,10 @@ const Cart = ({ cart, removeFromCart, addToCart, decreaseQuantity }) => {
         <div className="mt-7 flex h-30 flex-1 items-center rounded-2xl border-1 border-gray-100 p-10 shadow-md">
           <div className="text-4xl font-bold">Total:</div>
           <div className="ml-3 text-4xl font-bold text-yellow-500">
-            {cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2)} $
+            {cart
+              .reduce((acc, item) => acc + item.price * item.quantity, 0)
+              .toFixed(2)}{" "}
+            $
           </div>
         </div>
       </div>
